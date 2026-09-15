@@ -131,7 +131,7 @@ function montarEditor() {
   $$("[data-adicionar]").forEach((b) => b.addEventListener("click", () => adicionar(b.dataset.adicionar)));
   $("#ed-zoom-mais").addEventListener("click", () => editor.zoom_in());
   $("#ed-zoom-menos").addEventListener("click", () => editor.zoom_out());
-  $("#ed-zoom-reset").addEventListener("click", () => editor.zoom_reset());
+  $("#ed-zoom-reset").addEventListener("click", enquadrar);
   window.addEventListener("beforeunload", (e) => {
     if (alterado && !$("#editor").hidden) { e.preventDefault(); e.returnValue = ""; }
   });
@@ -180,7 +180,38 @@ export async function abrirEditor(id) {
   atualizarSelo();
   carregarPosts();
   carregarEtiquetas(true);
+  // o Drawflow guarda zoom e posicao entre aberturas; enquadra depois que as caixas tiverem tamanho
+  requestAnimationFrame(enquadrar);
   if (!id) setTimeout(() => selecionarNo(Object.keys(dadosDF())[0]), 50);
+}
+
+// cabe o funil inteiro na tela (zoom de no maximo 100%)
+function enquadrar() {
+  const nos = Object.values(dadosDF());
+  const area = $("#drawflow");
+  const W = area.clientWidth;
+  const H = area.clientHeight;
+  if (!nos.length || !W || !H) return;
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const n of nos) {
+    const caixa = $(`#node-${n.id}`);
+    minX = Math.min(minX, n.pos_x);
+    minY = Math.min(minY, n.pos_y);
+    maxX = Math.max(maxX, n.pos_x + (caixa?.offsetWidth || 250));
+    maxY = Math.max(maxY, n.pos_y + (caixa?.offsetHeight || 150));
+  }
+  const margem = 40;
+  const largura = maxX - minX;
+  const altura = maxY - minY;
+  const z = Math.min(1, Math.max(editor.zoom_min, Math.min((W - 2 * margem) / largura, (H - 2 * margem) / altura)));
+  // o Drawflow escala a partir do centro da tela (transform-origin padrao 50% 50%)
+  const sobraX = Math.max(0, (W - 2 * margem - largura * z) / 2);
+  const sobraY = Math.max(0, (H - 2 * margem - altura * z) / 2);
+  editor.zoom = z;
+  editor.zoom_last_value = z;
+  editor.canvas_x = margem + sobraX - W / 2 - (minX - W / 2) * z;
+  editor.canvas_y = margem + sobraY - H / 2 - (minY - H / 2) * z;
+  editor.precanvas.style.transform = `translate(${editor.canvas_x}px, ${editor.canvas_y}px) scale(${z})`;
 }
 
 export function fecharEditor(semPerguntar = false) {
