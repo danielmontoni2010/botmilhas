@@ -191,7 +191,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--acento); box-sh
 
     <section id="painel-atividade" role="tabpanel" aria-labelledby="aba-atividade" hidden>
       <div class="barra">
-        <p>Últimos comentários que o robô respondeu (ou tentou).</p>
+        <p>Últimos comentários e respostas de story que o robô respondeu (ou tentou).</p>
         <button class="btn" id="btn-atualizar" type="button">Atualizar</button>
       </div>
       <div class="lista" id="lista-atividade"></div>
@@ -221,7 +221,16 @@ input:focus, textarea:focus { outline: none; border-color: var(--acento); box-sh
         </div>
 
         <div class="campo">
-          <span class="rotulo">Onde o fluxo vale</span>
+          <span class="rotulo">Responde a</span>
+          <div class="opcoes">
+            <label class="opcao"><input type="checkbox" id="ed-canal-comentario"> Comentários nos posts</label>
+            <label class="opcao"><input type="checkbox" id="ed-canal-story"> Respostas aos stories</label>
+          </div>
+          <p class="dica" id="dica-story" hidden>Nos stories, o robô responde quando alguém responde qualquer story seu com a palavra-chave. A mesma pessoa recebe esse fluxo no máximo uma vez a cada 24h.</p>
+        </div>
+
+        <div class="campo" id="ed-bloco-onde">
+          <span class="rotulo">Em quais posts</span>
           <div class="opcoes">
             <label class="opcao"><input type="radio" name="onde" value="todos" checked> Todos os posts</label>
             <label class="opcao"><input type="radio" name="onde" value="post"> Um post específico</label>
@@ -254,10 +263,10 @@ input:focus, textarea:focus { outline: none; border-color: var(--acento); box-sh
           </div>
         </div>
 
-        <div class="campo">
+        <div class="campo" id="ed-bloco-publicas">
           <label for="ed-publicas">Respostas no comentário <span class="dica">(opcional)</span></label>
           <textarea id="ed-publicas" rows="3" placeholder="@{nome} te mandei no direct! 📩&#10;Enviado! Confere teu direct 😉"></textarea>
-          <p class="dica">Uma por linha, até 5. O robô sorteia uma para não repetir sempre a mesma.</p>
+          <p class="dica">Uma por linha, até 5. O robô sorteia uma para não repetir sempre a mesma. Só vale para comentários: story não tem resposta pública.</p>
         </div>
 
         <label class="opcao" style="justify-self:start">
@@ -386,13 +395,14 @@ function personalizar(texto, username) {
 }
 const normalizar = (s) =>
   s.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean).join(" ");
+const canaisDe = (f) => f.canais ?? ["comentario"];
 
 function traduzirErro(erro) {
   if (/code 1\//.test(erro)) return "A Meta recusou com um erro genérico. Costuma acontecer quando outra automação já respondeu esse comentário.";
-  if (/2534022|window|janela/i.test(erro)) return "Passou do prazo: a Meta só deixa responder no direct até 7 dias depois do comentário.";
+  if (/2534022|window|janela/i.test(erro)) return "Passou do prazo que a Meta permite para responder no direct.";
   if (/code 10\/|code 200\/|permission/i.test(erro)) return "Falta permissão no app da Meta. Confira se o app continua publicado e o token é válido.";
   if (/code 190\//.test(erro)) return "O token do Instagram venceu ou foi revogado. Gere um novo no painel da Meta e troque no Supabase.";
-  if (/code (4|17|32|613)\/|limit/i.test(erro)) return "Limite de envios da Meta atingido. O robô tenta de novo nos próximos comentários.";
+  if (/code (4|17|32|613)\/|limit/i.test(erro)) return "Limite de envios da Meta atingido. O robô tenta de novo nos próximos.";
   return erro;
 }
 
@@ -481,7 +491,7 @@ function renderStatus(s) {
     partes.push(`${s.semana.respondidos} ${s.semana.respondidos === 1 ? "resposta enviada" : "respostas enviadas"} nos últimos 7 dias`);
     if (s.semana.erros) partes.push(`${s.semana.erros} com erro`);
   }
-  if (s.erro_renovacao) partes.push("⚠ a renovação automática do token falhou — veja a aba Atividade ou me chame");
+  if (s.erro_renovacao) partes.push("⚠ a renovação automática do token falhou — me chame");
   $("#resumo").textContent = partes.join(" · ");
 }
 
@@ -500,11 +510,13 @@ function renderFluxos() {
     return;
   }
   for (const f of fluxos) {
+    const canais = canaisDe(f);
     const post = f.post_id ? posts?.find((p) => p.id === f.post_id) : null;
-    const onde = f.post_id
+    const comentarios = !canais.includes("comentario") ? null : f.post_id
       ? el("span", { class: "onde" }, post?.imagem ? el("img", { src: post.imagem, alt: "" }) : null,
-          post ? `Só em: ${resumoPost(post)}` : "Só em um post específico")
-      : el("span", { class: "onde" }, "Todos os posts");
+          post ? `Comentários só em: ${resumoPost(post)}` : "Comentários em um post específico")
+      : el("span", { class: "onde" }, "Comentários em todos os posts");
+    const stories = canais.includes("story") ? el("span", { class: "onde" }, "Respostas aos stories") : null;
 
     const chave = el("input", { type: "checkbox", "aria-label": `Fluxo ${f.nome} ativo` });
     chave.checked = f.ativa;
@@ -515,7 +527,8 @@ function renderFluxos() {
         el("h3", { text: f.nome }),
         el("div", { class: "chips" }, f.palavras.map((p) => el("span", { class: "chip", text: p }))),
         el("div", { class: "meta" },
-          onde,
+          comentarios,
+          stories,
           el("span", { text: `${f.disparos} ${f.disparos === 1 ? "envio" : "envios"}` }),
           f.ativa ? null : el("span", { class: "tag-pausado", text: "Pausado" }))),
       el("div", { class: "fluxo-acoes" },
@@ -542,12 +555,19 @@ async function alternar(f, chave) {
 const onde = () => document.querySelector("input[name=onde]:checked").value;
 const palavrasDigitadas = () => $("#ed-palavras").value.split(",").map((p) => p.trim()).filter(Boolean);
 const linhas = (sel) => $(sel).value.split("\n").map((l) => l.trim()).filter(Boolean);
+const canaisMarcados = () => [
+  $("#ed-canal-comentario").checked ? "comentario" : null,
+  $("#ed-canal-story").checked ? "story" : null,
+].filter(Boolean);
 
 function abrirEditor(f = null) {
   editandoId = f?.id ?? null;
   $("#ed-titulo").textContent = f ? "Editar fluxo" : "Novo fluxo";
   $("#ed-nome").value = f?.nome ?? "";
   $("#ed-palavras").value = (f?.palavras ?? []).join(", ");
+  const canais = f ? canaisDe(f) : ["comentario", "story"];
+  $("#ed-canal-comentario").checked = canais.includes("comentario");
+  $("#ed-canal-story").checked = canais.includes("story");
   postEscolhido = f?.post_id ?? null;
   document.querySelector(`input[name=onde][value=${postEscolhido ? "post" : "todos"}]`).checked = true;
   $("#ed-mensagem").value = f?.mensagem ?? "";
@@ -565,7 +585,9 @@ function abrirEditor(f = null) {
 }
 
 function renderPosts() {
-  const escolhendo = onde() === "post";
+  const comentario = $("#ed-canal-comentario").checked;
+  $("#ed-bloco-onde").hidden = !comentario;
+  const escolhendo = comentario && onde() === "post";
   $("#ed-posts-bloco").hidden = !escolhendo;
   const grade = $("#ed-posts");
   grade.replaceChildren();
@@ -588,13 +610,18 @@ function renderPosts() {
 }
 
 function atualizarPrevia() {
+  const canais = canaisMarcados();
+  const comentario = canais.includes("comentario");
+  $("#dica-story").hidden = !canais.includes("story");
+  $("#ed-bloco-publicas").hidden = !comentario;
+
   const msg = $("#ed-mensagem").value.trim();
   $("#prev-texto").textContent = msg ? personalizar(msg, "seguidor") : "Sua mensagem aparece aqui.";
   const textoBotao = $("#ed-botao-texto").value.trim();
   const link = $("#ed-botao-link").value.trim();
   $("#prev-botao").hidden = !(textoBotao || link);
   $("#prev-botao").textContent = textoBotao || "Abrir link";
-  const publicas = linhas("#ed-publicas");
+  const publicas = comentario ? linhas("#ed-publicas") : [];
   $("#prev-publica-bloco").hidden = !publicas.length;
   $("#prev-publica").textContent = publicas.length ? personalizar(publicas[0], "seguidor") : "";
 
@@ -603,16 +630,19 @@ function atualizarPrevia() {
   cm.classList.toggle("excesso", msg.length > 640);
   $("#cont-botao").textContent = `${textoBotao.length}/20`;
 
-  // choque de palavra-chave com outro fluxo ativo
+  // choque de palavra-chave com outro fluxo ativo no mesmo canal
   const minhas = palavrasDigitadas().map(normalizar).filter(Boolean);
   const escopo = onde() === "post" ? postEscolhido : null;
   const outros = fluxos.filter((f) => f.id !== editandoId && f.ativa && f.palavras.some((p) => minhas.includes(normalizar(p))));
-  const mesmoLugar = outros.find((f) => (f.post_id ?? null) === escopo);
-  const global = escopo ? outros.find((f) => !f.post_id) : null;
+  const noStory = canais.includes("story") ? outros.find((f) => canaisDe(f).includes("story")) : null;
+  const noMesmoPost = comentario ? outros.find((f) => canaisDe(f).includes("comentario") && (f.post_id ?? null) === escopo) : null;
+  const global = comentario && escopo ? outros.find((f) => canaisDe(f).includes("comentario") && !f.post_id) : null;
   const aviso = $("#ed-aviso");
-  if (mesmoLugar) {
+  if (noMesmoPost || noStory) {
+    const f = noMesmoPost ?? noStory;
+    const onde = noMesmoPost ? "nos mesmos comentários" : "nas respostas aos stories";
     aviso.className = "aviso-caixa aviso";
-    aviso.textContent = `A mesma palavra-chave já está no fluxo “${mesmoLugar.nome}”, no mesmo lugar. O robô vai usar só o fluxo mais antigo. Troque a palavra ou pause o outro.`;
+    aviso.textContent = `A mesma palavra-chave já está no fluxo “${f.nome}”, ${onde}. O robô vai usar só o fluxo mais antigo. Troque a palavra ou pause o outro.`;
     aviso.hidden = false;
   } else if (global) {
     aviso.className = "aviso-caixa info";
@@ -625,16 +655,20 @@ function atualizarPrevia() {
 
 async function salvar(ev) {
   ev.preventDefault();
-  if (onde() === "post" && !postEscolhido) return mostrarMsg("#ed-msg", "Escolha o post em que o fluxo vale.");
+  const canais = canaisMarcados();
+  if (!canais.length) return mostrarMsg("#ed-msg", "Marque onde o fluxo responde: comentários, stories ou os dois.");
+  const comentario = canais.includes("comentario");
+  if (comentario && onde() === "post" && !postEscolhido) return mostrarMsg("#ed-msg", "Escolha o post em que o fluxo vale.");
   const fluxo = {
     id: editandoId,
     nome: $("#ed-nome").value,
     palavras: palavrasDigitadas(),
-    post_id: onde() === "post" ? postEscolhido : null,
+    canais,
+    post_id: comentario && onde() === "post" ? postEscolhido : null,
     mensagem: $("#ed-mensagem").value,
     botao_texto: $("#ed-botao-texto").value,
     botao_link: $("#ed-botao-link").value,
-    respostas_publicas: linhas("#ed-publicas"),
+    respostas_publicas: comentario ? linhas("#ed-publicas") : [],
     ativa: $("#ed-ativa").checked,
   };
   const botao = $("#ed-salvar");
@@ -676,10 +710,11 @@ async function carregarAtividade() {
     lista.replaceChildren();
     if (!itens.length) { lista.append(el("div", { class: "vazio" }, "O robô ainda não respondeu ninguém.")); return; }
     for (const i of itens) {
+      const acao = i.origem === "story" ? " respondeu ao story " : " comentou ";
       lista.append(el("div", { class: "item" },
         el("span", { class: `status ${i.status}`, text: rotulos[i.status] ?? i.status }),
         el("div", { class: "item-corpo" },
-          el("div", {}, el("strong", { text: i.username ? `@${i.username}` : "Seguidor" }), " comentou ", el("q", { text: i.texto ?? "" })),
+          el("div", {}, el("strong", { text: i.username ? `@${i.username}` : "Seguidor" }), acao, el("q", { text: i.texto ?? "" })),
           el("div", { class: "meta" }, el("span", { text: i.fluxo ? `Fluxo: ${i.fluxo}` : "Fluxo já excluído" }), el("span", { text: haQuanto(i.visto_em) })),
           i.erro ? el("div", { class: "item-erro", text: traduzirErro(i.erro) }) : null)));
     }
@@ -710,7 +745,8 @@ $("#form-editor").addEventListener("input", atualizarPrevia);
 $("#ed-cancelar").addEventListener("click", () => $("#editor").close());
 $("#ed-fechar").addEventListener("click", () => $("#editor").close());
 $("#ed-excluir").addEventListener("click", excluir);
-document.querySelectorAll("input[name=onde]").forEach((r) => r.addEventListener("change", () => { renderPosts(); atualizarPrevia(); }));
+document.querySelectorAll("input[name=onde], #ed-canal-comentario, #ed-canal-story")
+  .forEach((r) => r.addEventListener("change", () => { renderPosts(); atualizarPrevia(); }));
 
 // entra direto se a senha ja estiver guardada neste aparelho
 (async () => {
