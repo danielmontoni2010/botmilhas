@@ -1,0 +1,157 @@
+/* Tema violeta (desenho "InstaFlow"): carrega depois do estilo.css e sobrescreve a paleta. */
+:root {
+  --bg: #0a0913; --s-lowest: #07060d; --s-low: #110f1e; --s: #16142a; --s-high: #1d1a33; --s-bright: #29254a;
+  --on: #f2f0fa; --on-var: #cbc7df; --outline: #8e8aa6; --outline-var: #25223b;
+  --primary: #c4b5fd; --primary-c: #7c3aed; --on-primary-c: #ffffff;
+  --secondary: #a78bfa; --secondary-c: #4f46e5;
+  --tertiary: #34d399; --tertiary-c: #059669;
+  --borda: 1px solid var(--outline-var);
+  --degrade: linear-gradient(135deg, #7c3aed 0%, #5b3df0 55%, #4f46e5 100%);
+  --brilho: 0 0 28px -6px rgba(124, 58, 237, .7);
+}
+body { background: var(--bg); }
+.conteudo { background: radial-gradient(900px 520px at 60% -12%, rgba(124, 58, 237, .16), transparent 60%); }
+
+/* componentes com borda fina, como no desenho */
+.cartao, .kpi, .bloco, .tabela, .vazio, .numero, .ed-painel, .paleta, .login form, .celular { border: var(--borda); }
+.btn { box-shadow: none; border: var(--borda); }
+.btn.fantasma { border-color: transparent; }
+.btn.primario { background: var(--degrade); color: #fff; border-color: rgba(167, 139, 250, .45); box-shadow: 0 10px 30px -12px rgba(124, 58, 237, .9); }
+.chip { background: rgba(124, 58, 237, .22); color: var(--primary); }
+.switch input:checked + .trilho { background: var(--primary-c); box-shadow: 0 0 16px -2px rgba(124, 58, 237, .8); }
+.switch input:checked + .trilho::after { background: #fff; }
+.menu a.ativo, .abas-celular a.ativo { background: var(--degrade); color: #fff; }
+.drawflow .connection .main-path { stroke: #8b5cf6; filter: drop-shadow(0 0 5px rgba(139, 92, 246, .55)); }
+
+/* ---------- menu lateral ---------- */
+.lateral { border-right: var(--borda); padding: 22px 14px; }
+.marca-logo { background: var(--degrade); border-radius: 12px; }
+.marca-logo .material-symbols-outlined { font-size: 22px; font-variation-settings: "FILL" 1; }
+.lateral .marca { font-size: 22px; padding: 2px 10px 26px; }
+.lateral .marca small { font-size: 9px; color: var(--outline); letter-spacing: .12em; }
+.menu { gap: 6px; }
+.menu a { padding: 13px 14px; font-size: 15px; border: 1px solid transparent; border-radius: 12px; }
+.menu a .material-symbols-outlined { font-size: 22px; }
+.menu a.ativo { border-color: rgba(167, 139, 250, .5); box-shadow: var(--brilho); font-weight: 600; }
+.menu-titulo { padding: 0 14px 8px; }
+.usuario { display: flex; align-items: center; gap: 11px; padding: 14px 8px 2px; border-top: var(--borda); margin-top: 6px; }
+.usuario .avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff; }
+.usuario div { display: grid; min-width: 0; }
+.usuario strong { font-size: 14px; }
+.usuario small { font-size: 12px; color: var(--outline); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.usuario .btn { margin-left: auto; }
+
+/* ---------- tela inicial ---------- */
+.view-inicio { max-width: 1320px; }
+.inicio-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-bottom: 22px; }
+.inicio-topo h1 { font-size: 34px; letter-spacing: -.02em; }
+.inicio-topo .sub { font-size: 15px; }
+.ig-botao { display: inline-flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px; border-radius: 14px; border: 1px solid rgba(167, 139, 250, .45);
+  background: rgba(124, 58, 237, .1); color: var(--on); text-decoration: none; font-weight: 600; box-shadow: var(--brilho); }
+.ig-botao:hover { background: rgba(124, 58, 237, .18); }
+.ig-logo { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; color: #fff;
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
+.ig-logo .material-symbols-outlined { font-size: 20px; }
+
+.atalhos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+.atalho { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 16px; border: var(--borda); background: var(--s-low); color: var(--on);
+  text-align: left; cursor: pointer; transition: border-color .15s, transform .15s, background .15s; }
+.atalho:hover { border-color: rgba(167, 139, 250, .45); background: var(--s); transform: translateY(-2px); }
+.atalho-ic { width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; flex-shrink: 0; background: rgba(124, 58, 237, .16); color: var(--primary); border: var(--borda); }
+.atalho.destaque .atalho-ic { background: var(--degrade); color: #fff; border: 0; box-shadow: var(--brilho); }
+.atalho-txt { display: grid; gap: 2px; min-width: 0; }
+.atalho-txt strong { font-size: 15px; font-weight: 600; }
+.atalho-txt small { font-size: 12.5px; color: var(--outline); }
+
+.inicio-grade { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+.inicio-lado { display: grid; gap: 12px; }
+
+/* chat do assistente */
+.painel-chat { display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto auto; height: max(560px, calc(100vh - 300px)); border-radius: 18px; border: var(--borda); background: var(--s-low); overflow: hidden; }
+.chat-topo { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: var(--borda); }
+.chat-topo strong { display: block; font-size: 15px; }
+.chat-avatar { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--degrade); color: #fff; box-shadow: var(--brilho); flex-shrink: 0; }
+.chat-avatar .material-symbols-outlined { font-variation-settings: "FILL" 1; }
+.online { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--on-var); }
+.online::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, .7); }
+.chat-topo .limpar { margin-left: auto; border: var(--borda); }
+.chat-msgs { overflow-y: auto; padding: 22px 20px; display: flex; flex-direction: column; gap: 16px; }
+.linha-bot { display: flex; gap: 12px; align-items: flex-start; max-width: 82%; }
+.linha-bot .chat-avatar { width: 36px; height: 36px; box-shadow: none; }
+.linha-bot .chat-avatar .material-symbols-outlined { font-size: 18px; }
+.linha-eu { align-self: flex-end; max-width: 78%; display: grid; justify-items: end; }
+.bolha { padding: 12px 15px; border-radius: 14px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14.5px; line-height: 1.5; }
+.linha-bot .bolha { background: var(--s-high); border-top-left-radius: 4px; }
+.linha-eu .bolha { background: var(--degrade); color: #fff; border-top-right-radius: 4px; box-shadow: 0 10px 26px -14px rgba(124, 58, 237, .9); }
+.hora { display: flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--outline); margin-top: 5px; }
+.hora .material-symbols-outlined { font-size: 15px; color: var(--secondary); }
+.digitando { display: inline-flex; gap: 4px; padding: 15px 16px; }
+.digitando i { width: 7px; height: 7px; border-radius: 50%; background: var(--outline); animation: ponto 1s infinite ease-in-out; }
+.digitando i:nth-child(2) { animation-delay: .15s; }
+.digitando i:nth-child(3) { animation-delay: .3s; }
+@keyframes ponto { 0%, 80%, 100% { opacity: .3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+.chat-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 12px; }
+.chat-chips:empty { display: none; }
+.chip-op { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 12px; border: var(--borda); background: transparent; color: var(--on);
+  font-weight: 500; font-size: 14px; cursor: pointer; transition: background .15s, border-color .15s; }
+.chip-op:hover { background: var(--s-high); border-color: rgba(167, 139, 250, .5); }
+.chip-op .material-symbols-outlined { font-size: 19px; color: var(--secondary); }
+.chip-op.forte { background: var(--degrade); color: #fff; border-color: rgba(167, 139, 250, .5); }
+.chip-op.forte .material-symbols-outlined { color: #fff; }
+.chat-campo { display: flex; align-items: center; gap: 10px; margin: 0 20px; padding: 6px 6px 6px 14px; border-radius: 16px; border: var(--borda); background: var(--s); }
+.chat-campo:focus-within { border-color: rgba(167, 139, 250, .6); }
+.chat-campo .material-symbols-outlined { color: var(--outline); }
+.chat-campo input { border: 0 !important; background: transparent !important; box-shadow: none !important; padding: 10px 4px; font-size: 15px; }
+.chat-enviar { width: 50px; height: 50px; border-radius: 13px; border: 0; background: var(--degrade); color: #fff; display: grid; place-items: center; cursor: pointer; box-shadow: var(--brilho); flex-shrink: 0; }
+.chat-enviar:disabled { opacity: .45; cursor: default; box-shadow: none; }
+.chat-dica { margin: 0; padding: 12px 20px 16px; text-align: center; font-size: 12.5px; color: var(--outline); }
+
+/* coluna da direita */
+.ig-cartao { padding: 18px; border-radius: 16px; border: var(--borda); background: var(--s-low); display: grid; gap: 16px; }
+.ig-cabeca { display: flex; align-items: center; gap: 12px; }
+.ig-foto { width: 50px; height: 50px; border-radius: 14px; padding: 2px; background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); flex-shrink: 0; }
+.ig-foto img, .ig-foto span { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; display: grid; place-items: center; background: var(--s-high); font-weight: 700; }
+.ig-cabeca strong { display: flex; align-items: center; gap: 7px; font-size: 14px; }
+.ig-cabeca strong::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px rgba(34, 197, 94, .7); }
+.ig-cabeca small { color: var(--outline); font-size: 13px; }
+.ig-cabeca a { margin-left: auto; font-size: 13px; font-weight: 600; text-decoration: none; }
+.ig-numeros { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; }
+.ig-numeros strong { display: block; font-family: "Plus Jakarta Sans", Inter, sans-serif; font-size: 18px; }
+.ig-numeros small { color: var(--outline); font-size: 12px; }
+.ig-robo { display: flex; justify-content: space-between; gap: 8px; padding-top: 12px; border-top: var(--borda); font-size: 12.5px; color: var(--on-var); }
+.ig-robo b { color: var(--on); }
+.titulo-lado { display: flex; align-items: center; gap: 8px; font-size: 18px; margin: 10px 0 2px; }
+.titulo-lado .material-symbols-outlined { color: #f59e0b; font-variation-settings: "FILL" 1; }
+.acoes { display: grid; gap: 10px; }
+.acao { display: flex; align-items: center; gap: 13px; width: 100%; padding: 13px 14px; border-radius: 14px; border: var(--borda); background: var(--s-low); color: var(--on);
+  text-align: left; cursor: pointer; transition: border-color .15s, background .15s; }
+.acao:hover { border-color: rgba(167, 139, 250, .45); background: var(--s); }
+.acao > .material-symbols-outlined:first-child { color: var(--secondary); font-size: 24px; }
+.acao span.txt { display: grid; min-width: 0; }
+.acao strong { font-size: 14px; font-weight: 600; }
+.acao small { font-size: 12.5px; color: var(--outline); }
+.acao > .material-symbols-outlined:last-child { margin-left: auto; color: var(--outline); }
+.dica-card { margin: 4px 0 0; padding: 20px 22px; border-radius: 16px; border: var(--borda);
+  background: linear-gradient(160deg, rgba(124, 58, 237, .16), rgba(17, 15, 30, .6)); }
+.dica-card .material-symbols-outlined { font-size: 34px; color: var(--secondary); font-variation-settings: "FILL" 1; }
+.dica-card blockquote { margin: 6px 0 8px; font-size: 16px; line-height: 1.5; color: var(--primary); }
+.dica-card figcaption { font-size: 12.5px; color: var(--outline); }
+
+/* ---------- responsivo ---------- */
+@media (max-width: 1200px) {
+  .atalhos { grid-template-columns: repeat(2, 1fr); }
+  .inicio-grade { grid-template-columns: 1fr; }
+  .painel-chat { height: 620px; }
+}
+@media (max-width: 900px) {
+  .abas-celular { grid-template-columns: repeat(5, 1fr); }
+  .inicio-topo h1 { font-size: 26px; }
+  .atalho { padding: 12px; }
+  .atalho-ic { width: 40px; height: 40px; }
+  .atalho-txt small { display: none; }
+  .painel-chat { height: 72vh; }
+  .linha-bot, .linha-eu { max-width: 92%; }
+  .chat-campo { margin: 0 12px; }
+  .chat-msgs { padding: 16px 12px; }
+  .chat-chips { padding: 0 12px 10px; }
+}

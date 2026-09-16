@@ -1,17 +1,18 @@
 // Login, navegacao entre as telas e a pilula de status do robo.
 import { $, $$, api, estado, guardado, haQuanto } from "./base.js";
+import * as inicio from "./inicio.js";
 import * as funis from "./funis.js";
 import * as contatos from "./contatos.js";
 import * as inbox from "./inbox.js";
 import * as metricas from "./metricas.js";
 
-const telas = { funis, contatos, inbox, metricas };
+const telas = { inicio, funis, contatos, inbox, metricas };
 let telaAtual = null;
 let timerStatus = null;
 
 function rota() {
   const [nome, ...resto] = location.hash.slice(1).split("/");
-  return { nome: telas[nome] ? nome : "funis", param: resto.join("/") || null };
+  return { nome: telas[nome] ? nome : "inicio", param: resto.join("/") || null };
 }
 
 function mostrarTela() {
@@ -37,6 +38,7 @@ function renderStatus(s) {
   pilula.className = `pilula ${tipo}`;
   pilula.textContent = texto;
   pilula.title = [u?.motivo, ...(u?.erros ?? [])].filter(Boolean).join("\n");
+  estado.numeros = s.numeros ?? null;
   if (s.conta) { estado.conta = s.conta; $("#conta").textContent = `@${s.conta}`; }
 }
 
