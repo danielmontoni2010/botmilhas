@@ -3,10 +3,10 @@
 import { $, $$, el, esc, api, toast, erroSilencioso, personalizar, duracao, carregarPosts, carregarEtiquetas, estado, CANAIS, normalizar } from "./base.js";
 
 const TIPOS = {
-  gatilho: { rotulo: "Gatilho", icone: "⚡", entradas: 0 },
-  mensagem: { rotulo: "Mensagem", icone: "💬", entradas: 1 },
-  espera: { rotulo: "Espera", icone: "⏱️", entradas: 1 },
-  etiqueta: { rotulo: "Etiqueta", icone: "🏷️", entradas: 1 },
+  gatilho: { rotulo: 'Gatilho', icone: 'bolt', entradas: 0 },
+  mensagem: { rotulo: 'Mensagem', icone: 'chat', entradas: 1 },
+  espera: { rotulo: 'Espera', icone: 'schedule', entradas: 1 },
+  etiqueta: { rotulo: 'Etiqueta', icone: 'label', entradas: 1 },
 };
 const PADRAO = {
   gatilho: () => ({ palavras: [], canais: ["comentario", "story"], post_id: null, respostas_publicas: [] }),
@@ -274,7 +274,7 @@ function htmlNo(tipo, d, id) {
   if (s?.clicou) partes.push(`👆 ${s.clicou} clicaram`);
   if (s?.etiquetou) partes.push(`🏷️ ${s.etiquetou}`);
   const rodape = partes.length ? `<div class="no-rodape">${partes.join(" · ")} <small>(30 dias)</small></div>` : "";
-  return `<div class="no no-${tipo}"><div class="no-topo"><span>${t.icone}</span>${t.rotulo}</div><div class="no-corpo">${corpo}</div>${rodape}</div>`;
+  return `<div class="no no-${tipo}"><div class="no-topo"><span class="material-symbols-outlined">${t.icone}</span>${t.rotulo}</div><div class="no-corpo">${corpo}</div>${rodape}</div>`;
 }
 
 function centroVisivel() {
@@ -342,7 +342,7 @@ function selecionar(id) {
   const n = no(id);
   painel.classList.add("aberto");
   painel.append(el("div", { class: "ed-painel-topo" },
-    el("h3", { text: `${TIPOS[n.name].icone} ${TIPOS[n.name].rotulo}` }),
+    el("h3", {}, el("span", { class: "ic material-symbols-outlined", text: TIPOS[n.name].icone }), TIPOS[n.name].rotulo),
     el("button", { class: "btn fantasma icone", type: "button", "aria-label": "Fechar", onclick: desselecionar }, "✕")));
   const formularios = { gatilho: formGatilho, mensagem: formMensagem, espera: formEspera, etiqueta: formEtiqueta };
   painel.append(formularios[n.name](id, n.data));

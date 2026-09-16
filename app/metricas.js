@@ -163,7 +163,7 @@ function blocoEtapas(r) {
       barras.push(barra(s.etiquetou ?? 0, entraram, n.dados.acao === "remover" ? "perderam a etiqueta" : "ganharam a etiqueta"));
     }
     bloco.append(el("div", { class: "etapa" },
-      el("span", { class: "ic", text: TIPOS[n.tipo]?.icone ?? "•" }),
+      el("span", { class: "ic material-symbols-outlined", text: TIPOS[n.tipo]?.icone ?? "circle" }),
       el("div", { class: "desc" }, el("div", { text: desc, title: desc }), el("small", { text: sub })),
       el("div", { style: "display:grid;gap:6px" }, barras)));
   }

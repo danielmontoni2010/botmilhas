@@ -4,7 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b1326">
 <title>BotMilhas — Painel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/drawflow@0.0.60/dist/drawflow.min.css">
 <link rel="stylesheet" href="app/estilo.css">
 <script src="https://cdn.jsdelivr.net/npm/drawflow@0.0.60/dist/drawflow.min.js"></script>
@@ -14,7 +19,7 @@
 
 <section class="login" id="tela-login" hidden>
   <form id="form-login">
-    <div class="marca"><span class="marca-logo">B</span><div>BotMilhas<small>Painel do Instagram</small></div></div>
+    <div class="marca"><span class="marca-logo">B</span><div>BotMilhas<small>Instagram Studio</small></div></div>
     <div class="campo">
       <label for="senha">Senha do painel</label>
       <input type="password" id="senha" autocomplete="current-password" required>
@@ -28,15 +33,16 @@
 <div class="app" id="app" hidden>
   <aside class="lateral">
     <div class="marca"><span class="marca-logo">B</span><div>BotMilhas<small id="conta">Instagram</small></div></div>
+    <div class="menu-titulo">Automação</div>
     <nav class="menu">
-      <a href="#funis" data-view="funis"><span class="ic">⚡</span>Funis</a>
-      <a href="#contatos" data-view="contatos"><span class="ic">👥</span>Contatos</a>
-      <a href="#inbox" data-view="inbox"><span class="ic">💬</span>Caixa de entrada</a>
-      <a href="#metricas" data-view="metricas"><span class="ic">📊</span>Métricas</a>
+      <a href="#funis" data-view="funis"><span class="material-symbols-outlined">account_tree</span>Funis</a>
+      <a href="#contatos" data-view="contatos"><span class="material-symbols-outlined">contacts</span>Contatos</a>
+      <a href="#inbox" data-view="inbox"><span class="material-symbols-outlined">forum</span>Caixa de entrada</a>
+      <a href="#metricas" data-view="metricas"><span class="material-symbols-outlined">query_stats</span>Métricas</a>
     </nav>
     <div class="lateral-rodape">
       <span class="pilula" id="pilula">Carregando…</span>
-      <button class="btn fantasma claro" id="btn-sair" type="button">Sair</button>
+      <button class="btn fantasma" id="btn-sair" type="button"><span class="material-symbols-outlined">logout</span>Sair</button>
     </div>
   </aside>
 
@@ -48,33 +54,36 @@
   </main>
 
   <nav class="abas-celular">
-    <a href="#funis" data-view="funis"><span>⚡</span>Funis</a>
-    <a href="#contatos" data-view="contatos"><span>👥</span>Contatos</a>
-    <a href="#inbox" data-view="inbox"><span>💬</span>Conversas</a>
-    <a href="#metricas" data-view="metricas"><span>📊</span>Métricas</a>
+    <a href="#funis" data-view="funis"><span class="material-symbols-outlined">account_tree</span>Funis</a>
+    <a href="#contatos" data-view="contatos"><span class="material-symbols-outlined">contacts</span>Contatos</a>
+    <a href="#inbox" data-view="inbox"><span class="material-symbols-outlined">forum</span>Conversas</a>
+    <a href="#metricas" data-view="metricas"><span class="material-symbols-outlined">query_stats</span>Métricas</a>
   </nav>
 </div>
 
 <div class="editor" id="editor" hidden>
   <header class="ed-barra">
-    <button class="btn fantasma" id="ed-voltar" type="button">← Funis</button>
+    <button class="btn fantasma" id="ed-voltar" type="button"><span class="material-symbols-outlined">arrow_back</span>Funis</button>
     <input type="text" id="ed-nome" maxlength="80" placeholder="Nome do funil" aria-label="Nome do funil">
     <span class="selo" id="ed-selo">Rascunho</span>
     <label class="ed-ativo"><span class="switch"><input type="checkbox" id="ed-ativo"><span class="trilho"></span></span> Ativo</label>
-    <button class="btn primario" id="ed-salvar" type="button">Salvar</button>
+    <button class="btn primario" id="ed-salvar" type="button"><span class="material-symbols-outlined">publish</span>Salvar</button>
   </header>
   <div class="ed-area">
-    <div class="paleta">
-      <button class="btn" type="button" data-adicionar="mensagem">💬 Mensagem</button>
-      <button class="btn" type="button" data-adicionar="espera">⏱️ Espera</button>
-      <button class="btn" type="button" data-adicionar="etiqueta">🏷️ Etiqueta</button>
-      <span class="paleta-espaco"></span>
-      <button class="btn icone" type="button" id="ed-zoom-menos" aria-label="Diminuir zoom">−</button>
-      <button class="btn icone" type="button" id="ed-zoom-reset" aria-label="Mostrar o funil inteiro" title="Mostrar o funil inteiro">⟳</button>
-      <button class="btn icone" type="button" id="ed-zoom-mais" aria-label="Aumentar zoom">+</button>
-    </div>
     <div class="tela" id="drawflow"></div>
     <aside class="ed-painel" id="ed-painel"></aside>
+    <div class="paleta">
+      <span class="rotulo">Adicionar</span>
+      <button class="btn" type="button" data-adicionar="mensagem"><span class="material-symbols-outlined">chat</span>Mensagem</button>
+      <button class="btn" type="button" data-adicionar="espera"><span class="material-symbols-outlined">schedule</span>Espera</button>
+      <button class="btn" type="button" data-adicionar="etiqueta"><span class="material-symbols-outlined">label</span>Etiqueta</button>
+      <span class="paleta-espaco"></span>
+      <div class="grupo">
+        <button class="btn icone" type="button" id="ed-zoom-menos" aria-label="Diminuir zoom" title="Diminuir zoom"><span class="material-symbols-outlined">remove</span></button>
+        <button class="btn icone" type="button" id="ed-zoom-reset" aria-label="Mostrar o funil inteiro" title="Mostrar o funil inteiro"><span class="material-symbols-outlined">center_focus_strong</span></button>
+        <button class="btn icone" type="button" id="ed-zoom-mais" aria-label="Aumentar zoom" title="Aumentar zoom"><span class="material-symbols-outlined">add</span></button>
+      </div>
+    </div>
     <div class="ed-avisos" id="ed-avisos" hidden></div>
   </div>
 </div>
